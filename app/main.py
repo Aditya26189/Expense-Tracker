@@ -1,10 +1,13 @@
 from fastapi import FastAPI
-from app.routes import expenses
+from .routes import expenses
+from .database import engine, Base
+
 app = FastAPI()
 
-@app.get("/")  
+Base.metadata.create_all(bind=engine)  # for tables creation
+
+app.include_router(expenses.router, prefix="/expenses", tags=["expenses"])
+
+@app.get("/")
 def home():
-    return {"message": "Welcome to the Expense Tracker!"}
-
-
-app.include_router(expenses.router)
+    return {"message": "Welcome to Expense Tracker API"}
